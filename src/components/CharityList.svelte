@@ -148,9 +148,8 @@
 						</div><!-- .xs-item-content END -->
 					</div><!-- .xs-popular-item END -->
 				</div>
-				{/each}
-			</div>
 			
+		{/each}
 			<!-- .row end -->
 		</div><!-- .container end -->
 	</section><!-- End popularCauses section -->

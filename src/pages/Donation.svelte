@@ -1,19 +1,25 @@
 <script>
-    import {onMount} from 'svelte';
+    import router from "page";
     import Header from '../components/Header.svelte';
     import Footer from '../components/Footer.svelte';
+    import Loader from '../components/Loader.svelte';
 
     export let params;
-    let charity;
+    let charity, amount, name, email, agree = false;
+    let data = getCharity(params.id);
 
     async function getCharity(id){
-        const res = await fetch('https://charity-api-bwa.herokuapp.com/charities/$(id}');
+        const res = await fetch('https://charity-api-bwa.herokuapp.com/charities/${id}');
         return res.json();
     }
+    function handleButtonClick(){
+        console.log("botton click")
+    }
+    function handleForm(event){
+        event.preventDefault();
+        console.log("form submitted");
+    }
 
-    onMount(async function(){
-        charity = await getCharity(params.id)
-    });
 </script>
 
 <style>
@@ -36,10 +42,12 @@
 <Header />
 <!-- welcome section -->
 <!--breadcumb start here-->
-{#if charity}
+{#await data}
+<Loader />
+{:then charity}
 <section class="xs-banner-inner-section parallax-window" style=
 "background-image:url('https://qph.fs.quoracdn.net/main-qimg-bf6988612a121cad07d2560c93337c51-c')">
-<div class="xs-black-overlay"></div>
+<div class="xs-black-overlay"> </div>
 <div class="container">
 <div class="color-white xs-inner-banner-content">
 <h2>Donate Now</h2>
@@ -71,20 +79,20 @@ us</span>" site. By calling <span class=
 "color-green">+44(0) 800 883 8450</span>.</p><span class=
 "xs-separetor v2"></span>
 </div><!-- .xs-heading end -->
-<form action="#" method="post" id="xs-donation-form" class="xs-donation-form" name="xs-donation-form">
+<form on:submit|preventDefault = {handleForm} action="#" method="post" id="xs-donation-form" class="xs-donation-form" name="xs-donation-form">
 <div class="xs-input-group">
 <label for="xs-donate-name">Donation Amount <span class="color-light-red">**</span></label> 
-<input type="text"name="name" id="xs-donate-name" class="form-control"placeholder="Minimum of $5">
+<input type="text"name="name" id="xs-donate-name" class="form-control" bind:value={amount} placeholder="Your donation in rupiah">
 </div><!-- .xs-input-group END -->
 
 <div class="xs-input-group">
 <label for="xs-donate-name">Your Name<span class="color-light-red">**</span></label>
-<input type="text"name="name" id="xs-donate-name" class="form-control"placeholder="Your Awesome Name">
+<input type="text"name="name" id="xs-donate-name" class="form-control" bind:value={name} placeholder="Your Awesome Name">
 </div>
 
 <div class="xs-input-group">
 <label for="xs-donate-name">Your Email<span class="color-light-red">**</span></label>
-<input type="text"name="name" id="xs-donate-name" class="form-control"placeholder="email@awesome.com">
+<input type="email"name="email" bind:value={email} id="xs-donate-name" class="form-control" placeholder="email@awesome.com">
 </div>
 
 <div class="xs-input-group" id="xs-input-checkbox">
@@ -93,7 +101,7 @@ us</span>" site. By calling <span class=
     </label>
 </div>
 
-<button type="submit" class="btn btn-warning"><span class="badge">
+<button type="submit" on:click|once={handleButtonClick} class="btn btn-warning"><span class="badge">
 <i class="fa fa-heart"></i></span> Donate now</button>
 </form><!-- .xs-donation-form #xs-donation-form END -->
 </div>
@@ -102,5 +110,5 @@ us</span>" site. By calling <span class=
 </div><!-- .container end -->
 </section><!-- End donation form section -->
 </main>
-{/if}
+{/await}
 <Footer />
